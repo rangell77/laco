@@ -1,7 +1,7 @@
 # Plano do Projeto — Lista de Presentes do Celebrante
 
 > Documento vivo. Última atualização: 14/11/2026.
-> Status: **Fase 1 (MVP com Pix estático) em desenvolvimento.** Fase com gateway de pagamento está planejada, mas **não será feita agora**.
+> Status: **Fase 1 no ar em desenvolvimento (Supabase conectado, fluxo do convidado testado) + boa parte da Fase 2.** Fase com gateway de pagamento está planejada, mas **não será feita agora**.
 
 ---
 
@@ -115,41 +115,46 @@ O dinheiro cai **direto na chave Pix do cliente**. A plataforma não toca no din
 
 ### Fase 1 — MVP (Pix estático) ← **agora**
 **Admin**
-- [ ] Login (Supabase Auth, e-mail + senha)
-- [ ] Dashboard: eventos ativos, total confirmado, contribuições aguardando
-- [ ] Criar e editar evento: tipo, nomes, data, local, slug, chave Pix, nome e cidade do recebedor
-- [ ] Convidar cliente por e-mail (vincula o cliente ao evento)
-- [ ] Ativar e desativar evento
+- [x] Login (Supabase Auth, e-mail + senha)
+- [x] Dashboard: eventos ativos, total confirmado, contribuições aguardando
+- [x] Criar e editar evento: tipo, nomes, data, local, slug, chave Pix, nome e cidade do recebedor
+- [x] Convidar cliente por e-mail (vincula o cliente ao evento)
+- [x] Ativar e desativar evento
 
 **Cliente**
-- [ ] Login via convite
-- [ ] Editor da página: foto de capa, texto/história, cor principal, tema, com preview
-- [ ] CRUD de presentes (4 tipos), com foto, ordem e ativo/inativo
-- [ ] Lista de contribuições com filtros (aguardando / confirmado / recusado / expirado)
-- [ ] Botões Confirmar e Não recebi
-- [ ] Compartilhar: copiar link, QR do link e texto pronto para WhatsApp
-- [ ] Exportar lista (CSV) para agradecimentos
+- [x] Login via convite
+- [x] Editor da página: foto de capa, texto/história, cor principal, tema, com preview
+- [x] CRUD de presentes (4 tipos), com foto, ordem e ativo/inativo
+- [x] Lista de contribuições com filtros (aguardando / confirmado / recusado / expirado)
+- [x] Botões Confirmar e Não recebi
+- [x] Compartilhar: copiar link, QR do link e texto pronto para WhatsApp
+- [x] Exportar lista (CSV) para agradecimentos
 
 **Página pública (convidado)**
-- [ ] Capa: foto, nomes, data, local e contagem regressiva
-- [ ] Texto/história do casal ou debutante
-- [ ] Grade de presentes (link, cota, meta com barra, Pix livre)
-- [ ] Modal de presente: nome, recado, valor (quando livre)
-- [ ] Tela Pix: QR, copia e cola (botão copiar), valor exato e botão "Já paguei"
-- [ ] Tela de agradecimento
-- [ ] Mobile-first (a maioria dos acessos vem do WhatsApp)
-- [ ] Meta tags Open Graph (foto e nomes aparecem bonitos no preview do WhatsApp)
+- [x] Capa: foto, nomes, data, local e contagem regressiva
+- [x] Texto/história do casal ou debutante
+- [x] Grade de presentes (link, cota, meta com barra, Pix livre)
+- [x] Modal de presente: nome, recado, valor (quando livre)
+- [x] Tela Pix: QR, copia e cola (botão copiar), valor exato e botão "Já paguei"
+- [x] Tela de agradecimento
+- [x] Mobile-first (a maioria dos acessos vem do WhatsApp)
+- [x] Meta tags Open Graph (foto e nomes aparecem bonitos no preview do WhatsApp)
 
 **Infra**
-- [ ] Imagens comprimidas no navegador (WebP, máx. 1600px) antes do upload
-- [ ] Upload pelo Supabase Storage, isolado na função `uploadImage()` para trocar por Cloudflare R2 no futuro
-- [ ] Job de expiração das pendentes (pg_cron ou verificação na leitura)
+- [x] Imagens comprimidas no navegador (WebP, máx. 1600px) antes do upload
+- [x] Upload pelo Supabase Storage, isolado na função `uploadImage()` para trocar por Cloudflare R2 no futuro
+- [x] Job de expiração das pendentes (pg_cron ou verificação na leitura)
 
 ### Fase 2 — Comodidades
-- [ ] Notificação ao cliente quando alguém clicar em "Já paguei" (e-mail; WhatsApp depois)
-- [ ] Exportar PDF bonito da lista de presentes recebidos
-- [ ] Catálogo de presentes sugeridos (adicionar com um clique)
-- [ ] Mais temas visuais (casamento clássico, rústico, praia, 15 anos etc.)
+- [ ] Notificação ao cliente quando alguém clicar em "Já paguei" (e-mail; WhatsApp depois). *Feito por enquanto: contador "aguardando" na aba Contribuições e no dashboard. E-mail depende de escolher um provedor (ex.: Resend).*
+- [x] Exportar PDF bonito da lista de presentes recebidos (`/painel/[id]/contribuicoes/imprimir`, imprimir ou salvar em PDF)
+- [x] Catálogo de presentes sugeridos (24 ideias, adicionar várias de uma vez em `/painel/[id]/presentes/ideias`)
+- [x] Mais temas visuais: Clássico, Jardim, Praia e Noite de gala (+ cor de destaque por evento)
+- [x] Pix de teste de R$ 0,01 na aba Compartilhar (mitiga "chave Pix errada")
+- [x] Expiração automática via pg_cron a cada 15 min (migration `20261114120000_agendamentos.sql`)
+
+### Marca (provisória)
+- Nome de trabalho: **Laço** (`src/lib/brand.ts`, troca num lugar só). Direção visual "a página é o objeto": convite, etiqueta, recibo. Tipos Imbue + Albert Sans; papel `#f2f2ee`, tinta `#181715`, dourado `#c4a032`.
 
 ### Fase 3 — Gateway de pagamento (ver 4.2)
 - [ ] Integração com o gateway escolhido

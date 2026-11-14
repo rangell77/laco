@@ -39,3 +39,9 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+!.env.example
+
+# ferramentas locais (screenshots do inspetor de design, downloads temporários)
+/.taste-skill/
+/assets/
+.claude/settings.local.json

@@ -1,26 +1,233 @@
 @import "tailwindcss";
 
+/* =====================================================================
+   Laço — papel e tinta, com um detalhe dourado.
+   Direção: "a página é o objeto" (convite, etiqueta, recibo).
+   ===================================================================== */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --bg: #e8e8e3;        /* chão: papel cinza quente */
+  --surface: #dcdcd6;   /* um degrau de tom */
+  --paper: #f2f2ee;     /* o cartão: osso, sem amarelar */
+  --ink: #181715;       /* tinta */
+  --muted: #5f5e58;     /* notas secundárias */
+  --accent: #c4a032;    /* dourado de convite (hot stamping) */
+  --accent-ink: #181715;
+  --field: #181715;     /* seção invertida */
+  --field-ink: #e8e8e3;
+  --ok: #2f6b3a;
+  --warn: #8a6a12;
+  --danger: #9b2c1f;
+
+  --step-small: clamp(0.8125rem, 0.79rem + 0.1vw, 0.875rem);
+  --step-body: clamp(1.0625rem, 1rem + 0.25vw, 1.1875rem);
+  --step-lead: clamp(1.25rem, 1.1rem + 0.7vw, 1.625rem);
+  --step-head: clamp(2rem, 1.3rem + 3.2vw, 4rem);
+
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  color-scheme: light;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-paper: var(--paper);
+  --color-ink: var(--ink);
+  --color-muted: var(--muted);
+  --color-accent: var(--accent);
+  --color-field: var(--field);
+  --color-field-ink: var(--field-ink);
+  --color-ok: var(--ok);
+  --color-warn: var(--warn);
+  --color-danger: var(--danger);
+  --font-sans: var(--font-albert);
+  --font-display: var(--font-imbue);
+  --font-serif: var(--font-imbue);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html {
+  -webkit-text-size-adjust: 100%;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-albert), system-ui, sans-serif;
+  font-size: var(--step-body);
+  line-height: 1.55;
+}
+
+::selection {
+  background: var(--accent);
+  color: var(--accent-ink);
+}
+
+:focus-visible {
+  outline: 3px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.font-display {
+  font-family: var(--font-imbue), Georgia, serif;
+  font-weight: 400;
+  font-optical-sizing: auto;
+  letter-spacing: -0.01em;
+  line-height: 0.9;
+  text-transform: uppercase;
+}
+
+/* Cinco tamanhos na página: small, body, lead, head, display. */
+.t-small {
+  font-size: 0.9375rem;
+  line-height: 1.5;
+}
+.t-body {
+  font-size: var(--step-body);
+  line-height: 1.55;
+}
+.t-lead {
+  font-size: var(--step-lead);
+  line-height: 1.3;
+}
+.t-head {
+  font-size: var(--step-head);
+}
+.t-display {
+  font-size: clamp(3.5rem, 2rem + 6.4vw, 7.5rem);
+}
+
+.tabular {
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---------- Papelaria: formas com borda de verdade ---------- */
+
+/* Cartão com cantos internos recortados (convite). */
+.card-scallop {
+  --r: 22px;
+  background: var(--paper);
+  -webkit-mask: radial-gradient(var(--r) at var(--r) var(--r), #0000 98%, #000) calc(-1 * var(--r)) calc(-1 * var(--r)); /* taste-skill-ignore: máscara de recorte, não é preenchimento */
+  mask: radial-gradient(var(--r) at var(--r) var(--r), #0000 98%, #000) calc(-1 * var(--r)) calc(-1 * var(--r)); /* taste-skill-ignore: máscara de recorte, não é preenchimento */
+}
+
+/* Pé em zigue-zague (recibo, comprovante Pix). */
+.edge-zigzag {
+  --s: 16px;
+  -webkit-mask: conic-gradient(from -45deg at bottom, #0000, #000 1deg 89deg, #0000 90deg) 50% / var(--s) 100%; /* taste-skill-ignore: máscara de recorte, não é preenchimento */
+  mask: conic-gradient(from -45deg at bottom, #0000, #000 1deg 89deg, #0000 90deg) 50% / var(--s) 100%; /* taste-skill-ignore: máscara de recorte, não é preenchimento */
+  padding-bottom: calc(var(--s) / 2 + 8px);
+}
+
+/* Topo com ondas (verso do cartão). */
+.edge-scallop-top {
+  --s: 48px;
+  -webkit-mask: radial-gradient(calc(var(--s) / 2) at 50% 0, #0000 98%, #000) 50% calc(var(--s) / -4) / var(--s) 100% repeat-x; /* taste-skill-ignore: máscara de recorte, não é preenchimento */
+  mask: radial-gradient(calc(var(--s) / 2) at 50% 0, #0000 98%, #000) 50% calc(var(--s) / -4) / var(--s) 100% repeat-x; /* taste-skill-ignore: máscara de recorte, não é preenchimento */
+}
+
+/* Etiqueta de presente: canto superior cortado e furo do laço. */
+.tag {
+  clip-path: polygon(28px 0, 100% 0, 100% 100%, 0 100%, 0 28px);
+}
+
+/* Pontilhado de cardápio entre nome e valor. */
+.dot-leader {
+  flex: 1;
+  min-width: 1.5rem;
+  margin: 0 0.5rem 0.35em;
+  border-bottom: 4px dotted currentColor;
+  opacity: 0.35;
+}
+
+/* Losango sólido de convite. */
+.diamond {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  background: var(--accent);
+  transform: rotate(45deg);
+}
+
+/* ---------- Movimento ---------- */
+/* Entradas: CSS puro, guiadas pela rolagem. Navegador sem suporte mostra tudo parado.
+   Usa `translate` (não `transform`) para não brigar com rotações e centralizações. */
+@keyframes rise {
+  from {
+    opacity: 0;
+    translate: 0 32px;
+  }
+}
+@supports (animation-timeline: view()) {
+  .reveal {
+    animation: rise linear both;
+    animation-timeline: view();
+    animation-range: entry calc(var(--i, 0) * 6%) entry calc(55% + var(--i, 0) * 6%);
+  }
+}
+
+/* Entrada da capa, ao carregar. */
+.rise {
+  animation: rise 1s var(--ease-out) both;
+  animation-delay: calc(var(--i, 0) * 90ms);
+}
+
+.press {
+  transition:
+    transform 0.15s var(--ease-out),
+    background-color 0.2s,
+    color 0.2s;
+}
+.press:hover {
+  transform: translateY(-2px);
+}
+.press:active {
+  transform: translateY(1px) scale(0.99);
+}
+
+@keyframes drift {
+  from {
+    transform: scale(1.04) translate3d(0, 0, 0);
+  }
+  to {
+    transform: scale(1.12) translate3d(-1.5%, -1%, 0);
+  }
+}
+.drift {
+  animation: drift 24s var(--ease-out) infinite alternate;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal,
+  .rise {
+    opacity: 1;
+    translate: none;
+    transition: none;
+    animation: none;
+  }
+  .press,
+  .press:hover,
+  .press:active {
+    transform: none;
+  }
+  .drift {
+    animation: none;
+  }
+}
+
+/* Tema "noite": o que fica direto sobre o fundo escuro vira papel. */
+[data-tema="noite"] .on-ground {
+  color: #f4f1ea;
+}
+[data-tema="noite"] .on-ground .text-muted,
+[data-tema="noite"] .on-ground.text-muted {
+  color: #c9c6bd;
+}
+
+/* Impressão (lista de agradecimentos em PDF). */
+@media print {
+  .no-print {
+    display: none !important;
+  }
+  body {
+    background: #fff;
+  }
 }
