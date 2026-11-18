@@ -18,6 +18,8 @@ const csp = [
   `img-src 'self' data: blob: https://${supabaseHost}`,
   "font-src 'self'",
   `connect-src 'self' https://${supabaseHost} wss://${supabaseHost}`,
+  // Mapa de satélite do Google incorporado na seção "Como chegar" (sem chave de API).
+  "frame-src https://www.google.com https://maps.google.com",
   "frame-ancestors 'none'",
   "base-uri 'self'",
   "form-action 'self'",

@@ -3,7 +3,6 @@ import { notFound } from "next/navigation";
 import { createContribution } from "@/app/actions/guest";
 import { SubmitButton } from "@/components/submit-button";
 import { Alert, Field, Input, Textarea } from "@/components/ui";
-import { readableOn } from "@/lib/color";
 import { formatBRL } from "@/lib/money";
 import { getPublicEvent, getPublicGifts } from "@/lib/public-event";
 
@@ -28,7 +27,7 @@ export default async function PresentePage({
   const item = found?.item;
   const tipo = item?.tipo ?? "pix_livre";
   const valorLivre = tipo === "meta" || tipo === "pix_livre";
-  const corTexto = readableOn(event.cor_principal);
+  const corTexto = "var(--cor-texto)";
 
   return (
     <main className="mx-auto max-w-lg px-3 pt-8 sm:px-4">
@@ -48,7 +47,9 @@ export default async function PresentePage({
             <p className="tabular t-lead mt-4 font-semibold">{formatBRL(item.valor_centavos)}</p>
           )}
 
-          {found?.esgotado ? (
+          {!event.ativo ? (
+            <p className="mt-6 bg-bg p-5 text-center">Prévia: o formulário e o Pix ficam disponíveis depois que a página for publicada.</p>
+          ) : found?.esgotado ? (
             <p className="mt-6 bg-bg p-5 text-center">Esse presente já foi escolhido. Que tal outro da lista?</p>
           ) : (
             <form action={createContribution} className="mt-8 flex flex-col gap-5">

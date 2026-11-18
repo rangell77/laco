@@ -213,13 +213,13 @@ body {
   }
 }
 
-/* Tema "noite": o que fica direto sobre o fundo escuro vira papel. */
-[data-tema="noite"] .on-ground {
-  color: #f4f1ea;
+/* Texto direto sobre o fundo do evento: a cor é calculada pela paleta (clara ou escura). */
+.on-ground {
+  color: var(--ground-ink, inherit);
 }
-[data-tema="noite"] .on-ground .text-muted,
-[data-tema="noite"] .on-ground.text-muted {
-  color: #c9c6bd;
+.on-ground .text-muted,
+.on-ground.text-muted {
+  color: var(--ground-muted, var(--muted));
 }
 
 /* Impressão (lista de agradecimentos em PDF). */

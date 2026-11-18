@@ -14,20 +14,38 @@ const orNull = (v: string) => (v === "" ? null : v);
 
 const EVENT_TYPES: EventType[] = ["casamento", "quinze_anos", "bodas", "outro"];
 
+const HEX = /^#[0-9a-fA-F]{6}$/;
+const hexOrNull = (v: string) => (HEX.test(v) ? v : null);
+const timeOrNull = (v: string) => (/^([01]\d|2[0-3]):[0-5]\d$/.test(v) ? v : null);
+const pick = <T extends string>(v: string, ok: readonly T[], fallback: T): T => (ok.includes(v as T) ? (v as T) : fallback);
+
+/** Só aceita imagens do nosso próprio bucket (evita links externos ou "javascript:"). */
+const STORAGE_PREFIX = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/event-images/`;
+const imageOrNull = (v: string) => (v.startsWith(STORAGE_PREFIX) && !v.includes("..") ? v : null);
+
 /** Campos editáveis por admin e cliente. */
 function readEventFields(fd: FormData) {
   const tipo = str(fd, "tipo") as EventType;
-  const cor = str(fd, "cor_principal");
   return {
     tipo: EVENT_TYPES.includes(tipo) ? tipo : "casamento",
-    titulo: str(fd, "titulo"),
+    titulo: str(fd, "titulo").slice(0, 80),
     data_evento: orNull(str(fd, "data_evento")),
-    local: orNull(str(fd, "local")),
-    historia: orNull(str(fd, "historia")),
-    capa_url: orNull(str(fd, "capa_url")),
+    hora_evento: timeOrNull(str(fd, "hora_evento")),
+    local: orNull(str(fd, "local").slice(0, 120)),
+    local_endereco: orNull(str(fd, "local_endereco").slice(0, 200)),
+    recepcao_local: orNull(str(fd, "recepcao_local").slice(0, 120)),
+    recepcao_endereco: orNull(str(fd, "recepcao_endereco").slice(0, 200)),
+    recepcao_hora: timeOrNull(str(fd, "recepcao_hora")),
+    historia: orNull(str(fd, "historia").slice(0, 1200)),
+    capa_url: imageOrNull(str(fd, "capa_url")),
+    logo_url: imageOrNull(str(fd, "logo_url")),
+    foto_layout: pick(str(fd, "foto_layout"), ["destaque", "retrato"] as const, "destaque"),
+    foto_foco: pick(str(fd, "foto_foco"), ["topo", "centro", "baixo"] as const, "centro"),
     tema: str(fd, "tema") in TEMAS ? str(fd, "tema") : "classico",
-    cor_principal: /^#[0-9a-fA-F]{6}$/.test(cor) ? cor : "#b08968",
-    pix_chave: orNull(str(fd, "pix_chave")),
+    cor_principal: hexOrNull(str(fd, "cor_principal")) ?? "#9c6b3f",
+    cor_fundo: hexOrNull(str(fd, "cor_fundo")),
+    cor_papel: hexOrNull(str(fd, "cor_papel")),
+    pix_chave: orNull(str(fd, "pix_chave").slice(0, 77)),
     pix_nome: orNull(str(fd, "pix_nome").slice(0, 25)),
     pix_cidade: orNull(str(fd, "pix_cidade").slice(0, 15)),
   };

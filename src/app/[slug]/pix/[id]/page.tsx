@@ -27,7 +27,7 @@ export default async function PixPage({
   const { data: c } = await db
     .from("contributions")
     .select(
-      "id, status, metodo, valor_cobrado_centavos, expira_em, convidado_nome, events!inner(slug, ativo, cor_principal, pix_chave, pix_nome, pix_cidade), gift_items(titulo)",
+      "id, status, metodo, valor_cobrado_centavos, expira_em, convidado_nome, events!inner(slug, ativo, cor_principal, logo_url, pix_chave, pix_nome, pix_cidade), gift_items(titulo)",
     )
     .eq("id", id)
     .eq("events.slug", slug)
@@ -38,6 +38,7 @@ export default async function PixPage({
     slug: string;
     ativo: boolean;
     cor_principal: string;
+    logo_url: string | null;
     pix_chave: string;
     pix_nome: string;
     pix_cidade: string;
@@ -67,6 +68,10 @@ export default async function PixPage({
 
       {/* O comprovante: papel com pé em zigue-zague */}
       <article className="edge-zigzag rise mt-3 bg-paper px-6 pt-8 text-center sm:px-8">
+        {event.logo_url && (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img src={event.logo_url} alt="" className="mx-auto mb-4 max-h-12 w-auto max-w-[50%] object-contain" />
+        )}
         <p className="font-medium">{gift?.titulo ?? "Presente em dinheiro"}</p>
         <p className="t-small text-muted">de {c.convidado_nome}</p>
         <p className="tabular font-display mt-5 text-[clamp(3.5rem,14vw,5rem)] normal-case">

@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { ComoChegar } from "@/components/como-chegar";
 import { Countdown } from "@/components/countdown";
-import { readableOn } from "@/lib/color";
+import { formatHora, locaisDoEvento } from "@/lib/local";
 import { formatBRL } from "@/lib/money";
 import { getPublicEvent, getPublicGifts } from "@/lib/public-event";
 import { EVENT_TYPE_LABEL } from "@/lib/types";
@@ -19,6 +20,8 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     title: { absolute: title },
     description,
     openGraph: { title, description, type: "website", images: event.capa_url ? [event.capa_url] : undefined },
+    // Rascunho não deve ser indexado nem pré-visualizado por robôs.
+    robots: event.ativo ? undefined : { index: false, follow: false },
   };
 }
 
@@ -28,43 +31,76 @@ export default async function EventPage({ params }: { params: Promise<{ slug: st
   if (!event) notFound();
   const gifts = await getPublicGifts(event.id);
   const temPixLivre = gifts.some((g) => g.item.tipo === "pix_livre");
-  const corTexto = readableOn(event.cor_principal);
+  const corTexto = "var(--cor-texto)";
 
   const dataFmt = event.data_evento
     ? new Date(event.data_evento + "T12:00:00").toLocaleDateString("pt-BR", { day: "numeric", month: "long", year: "numeric" })
     : null;
+  const hora = formatHora(event.hora_evento);
   const nomes = splitTitulo(event.titulo);
+  const locais = locaisDoEvento(event);
+  const foco = { topo: "50% 20%", centro: "50% 45%", baixo: "50% 75%" }[event.foto_foco ?? "centro"];
+  const destaque = !!event.capa_url && event.foto_layout !== "retrato";
+  const retrato = !!event.capa_url && event.foto_layout === "retrato";
 
   return (
     <main>
-      {/* Capa: o convite sobre a foto do casal (ou sobre o fundo do tema) */}
-      <section className="relative overflow-hidden pb-16 pt-24 sm:pt-36">
-        {event.capa_url && (
-          <>
+      {/* Capa. Foto em destaque: o casal aparece inteiro e o convite sobe por cima da parte de baixo. */}
+      <section className={`relative pb-6 ${destaque ? "" : "pt-20 sm:pt-32"}`}>
+        {destaque && (
+          <div className="relative h-[64svh] min-h-[380px] overflow-hidden bg-field sm:h-[80svh]">
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={event.capa_url} alt="" className="drift absolute inset-0 h-full w-full object-cover" />
-            <div className="absolute inset-0 bg-black/35" />
-          </>
+            <img
+              src={event.capa_url!}
+              alt={`Foto de ${event.titulo}`}
+              className="drift h-full w-full object-cover"
+              style={{ objectPosition: foco }}
+            />
+          </div>
         )}
-        <div className="card-scallop rise relative mx-3 px-6 pb-14 pt-14 text-center sm:mx-auto sm:max-w-[620px] sm:px-14 sm:pt-16">
+        <div
+          className={`card-scallop rise relative z-10 mx-3 px-6 pb-12 text-center sm:mx-auto sm:max-w-[620px] sm:px-14 ${destaque ? "-mt-24 pt-10 sm:-mt-36 sm:pt-12" : "pt-12 sm:pt-14"}`}
+        >
+          {retrato && (
+            <div className="mx-auto mb-8 w-[min(260px,70%)] -rotate-2 bg-white p-2.5 pb-8">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src={event.capa_url!} alt={`Foto de ${event.titulo}`} className="aspect-[4/5] w-full object-cover" style={{ objectPosition: foco }} />
+            </div>
+          )}
+          {event.logo_url && (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img src={event.logo_url} alt="" className="mx-auto mb-6 max-h-16 w-auto max-w-[60%] object-contain sm:max-h-20" />
+          )}
           <h1 className="font-display t-display">
             <span className="block sm:-translate-x-[6%]">{nomes[0]}</span>
             {nomes[1] && <span className="block sm:translate-x-[6%]">{nomes[1]}</span>}
           </h1>
-          <ul className="mt-8 flex flex-col items-center gap-2">
+          <ul className="mt-8 flex flex-col items-center gap-1.5">
             <li className="font-medium">{EVENT_TYPE_LABEL[event.tipo]}</li>
-            {dataFmt && <li>{dataFmt}</li>}
+            {dataFmt && (
+              <li>
+                {dataFmt}
+                {hora && ` · ${hora}`}
+              </li>
+            )}
             {event.local && <li>{event.local}</li>}
             <li aria-hidden className="diamond my-2" />
           </ul>
           {event.data_evento && <Countdown date={event.data_evento} />}
-          <a
-            href="#presentes"
-            className="press mt-8 inline-flex min-h-12 items-center px-7 font-medium"
-            style={{ background: "var(--cor)", color: corTexto }}
-          >
-            Ver a lista de presentes
-          </a>
+          <div className="mt-8 flex flex-col items-center gap-3 sm:flex-row sm:justify-center">
+            <a
+              href="#presentes"
+              className="press inline-flex min-h-12 items-center px-7 font-medium"
+              style={{ background: "var(--cor)", color: corTexto }}
+            >
+              Ver a lista de presentes
+            </a>
+            {locais.length > 0 && (
+              <a href="#local" className="press inline-flex min-h-12 items-center bg-bg px-6 font-medium">
+                Como chegar
+              </a>
+            )}
+          </div>
         </div>
       </section>
 
@@ -73,6 +109,8 @@ export default async function EventPage({ params }: { params: Promise<{ slug: st
           <p className="t-lead whitespace-pre-line">{event.historia}</p>
         </section>
       )}
+
+      <ComoChegar locais={locais} slug={event.slug} temData={!!event.data_evento} />
 
       <section id="presentes" className="mx-auto max-w-5xl scroll-mt-6 px-3 pt-24 sm:px-6 sm:pt-32">
         <div className="on-ground text-center">

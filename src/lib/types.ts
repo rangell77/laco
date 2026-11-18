@@ -20,7 +20,22 @@ export type EventRow = {
   tema: string;
   cor_principal: string;
   ativo: boolean;
+  // Personalização
+  cor_fundo: string | null;
+  cor_papel: string | null;
+  logo_url: string | null;
+  foto_layout: "destaque" | "retrato";
+  foto_foco: "topo" | "centro" | "baixo";
+  hora_evento: string | null; // "HH:MM:SS"
+  local_endereco: string | null;
+  recepcao_local: string | null;
+  recepcao_endereco: string | null;
+  recepcao_hora: string | null;
 };
+
+/** Colunas lidas pela página pública (sem dados do Pix). */
+export const PUBLIC_EVENT_COLUMNS =
+  "id, slug, tipo, titulo, data_evento, local, historia, capa_url, tema, cor_principal, ativo, cor_fundo, cor_papel, logo_url, foto_layout, foto_foco, hora_evento, local_endereco, recepcao_local, recepcao_endereco, recepcao_hora";
 
 export type EventFull = EventRow & {
   pix_chave: string | null;

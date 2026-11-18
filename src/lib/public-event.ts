@@ -1,17 +1,15 @@
 import "server-only";
 import { cache } from "react";
 import { createClient } from "@/lib/supabase/server";
-import type { EventRow, GiftItemRow, GiftProgress } from "@/lib/types";
+import { PUBLIC_EVENT_COLUMNS, type EventRow, type GiftItemRow, type GiftProgress } from "@/lib/types";
 
-/** Evento publicado pelo slug (leitura pública, via RLS). */
+/**
+ * Evento pelo slug. Quem decide o que aparece é a RLS:
+ * visitante só vê eventos publicados; admin e o casal veem também o rascunho (prévia).
+ */
 export const getPublicEvent = cache(async (slug: string) => {
   const supabase = await createClient();
-  const { data } = await supabase
-    .from("events")
-    .select("id, slug, tipo, titulo, data_evento, local, historia, capa_url, tema, cor_principal, ativo")
-    .eq("slug", slug)
-    .eq("ativo", true)
-    .maybeSingle<EventRow>();
+  const { data } = await supabase.from("events").select(PUBLIC_EVENT_COLUMNS).eq("slug", slug).maybeSingle<EventRow>();
   return data;
 });
 

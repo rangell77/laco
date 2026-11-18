@@ -32,7 +32,10 @@ function readGift(fd: FormData): { data?: Record<string, unknown>; erro?: string
       tipo,
       titulo,
       descricao: str(fd, "descricao") || null,
-      imagem_url: str(fd, "imagem_url") || null,
+      // Só imagens do nosso bucket (evita links externos ou "javascript:")
+      imagem_url: str(fd, "imagem_url").startsWith(`${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/event-images/`)
+        ? str(fd, "imagem_url")
+        : null,
       valor_centavos: tipo === "pix_livre" ? null : valor,
       quantidade: tipo === "meta" || tipo === "pix_livre" ? null : quantidade,
       url_externa: tipo === "link" ? url : null,
