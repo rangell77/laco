@@ -71,8 +71,15 @@ export function GiftForm({ eventId, gift }: { eventId: string; gift?: GiftItemRo
         </Field>
       </div>
 
-      <Field label="Descrição" hint="Opcional">
-        <Textarea name="descricao" rows={3} defaultValue={gift?.descricao ?? ""} />
+      <Field
+        label="Descrição"
+        hint={
+          tipo === "pix_livre"
+            ? "Opcional. Se este for o único presente visível, o convite mostra um bloco de destaque: a primeira frase vira a chamada e o resto aparece como texto. Pule uma linha entre os parágrafos."
+            : "Opcional"
+        }
+      >
+        <Textarea name="descricao" rows={tipo === "pix_livre" ? 10 : 3} defaultValue={gift?.descricao ?? ""} />
       </Field>
 
       <ImageUpload name="imagem_url" eventId={eventId} defaultValue={gift?.imagem_url} label="Foto do presente" />

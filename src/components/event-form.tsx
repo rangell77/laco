@@ -54,6 +54,35 @@ export function EventForm({
         </Field>
       </fieldset>
 
+      {/* ---------------- Cartas ---------------- */}
+      <fieldset className="flex min-w-0 flex-col gap-6">
+        <legend className="font-display mb-2 text-4xl">Cartas</legend>
+        <p className="text-[0.9375rem] text-muted">
+          Até duas mensagens assinadas, como a carta da mãe e a da aniversariante. Deixe em branco para não mostrar.
+        </p>
+        {([1, 2] as const).map((n) => (
+          <div key={n} className="grid gap-5 bg-bg p-5 sm:p-6">
+            <Field label={`Carta ${n}: de quem`} hint={n === 1 ? 'Ex.: "Da mãe" ou "Dos pais"' : 'Ex.: "Iasmin"'}>
+              <Input name={`carta${n}_de`} defaultValue={(n === 1 ? event?.carta1_de : event?.carta2_de) ?? ""} maxLength={60} />
+            </Field>
+            <Field label="Texto" hint="Pule uma linha entre os parágrafos.">
+              <Textarea
+                name={`carta${n}_texto`}
+                rows={8}
+                defaultValue={(n === 1 ? event?.carta1_texto : event?.carta2_texto) ?? ""}
+                maxLength={4000}
+              />
+            </Field>
+          </div>
+        ))}
+        <Field label="Como mostrar as cartas">
+          <Select name="cartas_layout" defaultValue={event?.cartas_layout ?? "sequencia"}>
+            <option value="sequencia">Uma depois da outra</option>
+            <option value="lado">Lado a lado (no celular, deslizar para o lado)</option>
+          </Select>
+        </Field>
+      </fieldset>
+
       {/* ---------------- Locais ---------------- */}
       <fieldset className="flex min-w-0 flex-col gap-6">
         <legend className="font-display mb-2 text-4xl">Onde vai ser</legend>
@@ -66,7 +95,12 @@ export function EventForm({
             <Input name="local" defaultValue={event?.local ?? ""} placeholder="Espaço Jardim" maxLength={120} />
           </Field>
           <Field label="Endereço" hint="Rua, número e cidade">
-            <Input name="local_endereco" defaultValue={event?.local_endereco ?? ""} placeholder="Rua das Flores, 120, Campinas" maxLength={200} />
+            <Input
+              name="local_endereco"
+              defaultValue={event?.local_endereco ?? ""}
+              placeholder="Rua das Flores, 120, Campinas"
+              maxLength={200}
+            />
           </Field>
           <Field label="Horário">
             <Input name="hora_evento" type="time" defaultValue={hhmm(event?.hora_evento)} />
@@ -77,10 +111,20 @@ export function EventForm({
             Recepção <span className="font-normal text-muted">(opcional, se a festa for em outro lugar)</span>
           </p>
           <Field label="Nome do local">
-            <Input name="recepcao_local" defaultValue={event?.recepcao_local ?? ""} placeholder="Salão Villa Real" maxLength={120} />
+            <Input
+              name="recepcao_local"
+              defaultValue={event?.recepcao_local ?? ""}
+              placeholder="Salão Villa Real"
+              maxLength={120}
+            />
           </Field>
           <Field label="Endereço">
-            <Input name="recepcao_endereco" defaultValue={event?.recepcao_endereco ?? ""} placeholder="Av. Brasil, 900, Campinas" maxLength={200} />
+            <Input
+              name="recepcao_endereco"
+              defaultValue={event?.recepcao_endereco ?? ""}
+              placeholder="Av. Brasil, 900, Campinas"
+              maxLength={200}
+            />
           </Field>
           <Field label="Horário">
             <Input name="recepcao_hora" type="time" defaultValue={hhmm(event?.recepcao_hora)} />
@@ -160,7 +204,12 @@ export function EventForm({
           {submitLabel}
         </SubmitButton>
         {event && (
-          <a href={`/${event.slug}`} target="_blank" rel="noopener" className="text-[0.9375rem] underline-offset-4 hover:underline">
+          <a
+            href={`/${event.slug}`}
+            target="_blank"
+            rel="noopener"
+            className="text-[0.9375rem] underline-offset-4 hover:underline"
+          >
             Ver como o convidado vê ↗
           </a>
         )}

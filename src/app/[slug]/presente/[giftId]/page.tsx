@@ -42,7 +42,7 @@ export default async function PresentePage({
         )}
         <div className="p-6 sm:p-8">
           <h1 className="font-display t-head">{item?.titulo ?? "Presente em dinheiro"}</h1>
-          {item?.descricao && <p className="mt-3 text-muted">{item.descricao}</p>}
+          {item?.descricao && <p className="mt-3 whitespace-pre-line text-muted">{item.descricao}</p>}
           {item?.valor_centavos != null && tipo !== "meta" && (
             <p className="tabular t-lead mt-4 font-semibold">{formatBRL(item.valor_centavos)}</p>
           )}

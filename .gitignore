@@ -45,3 +45,4 @@ next-env.d.ts
 /.taste-skill/
 /assets/
 .claude/settings.local.json
+/prints-iasmin/

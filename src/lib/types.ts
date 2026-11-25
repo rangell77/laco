@@ -31,11 +31,16 @@ export type EventRow = {
   recepcao_local: string | null;
   recepcao_endereco: string | null;
   recepcao_hora: string | null;
+  carta1_de: string | null;
+  carta1_texto: string | null;
+  carta2_de: string | null;
+  carta2_texto: string | null;
+  cartas_layout: "sequencia" | "lado";
 };
 
 /** Colunas lidas pela página pública (sem dados do Pix). */
 export const PUBLIC_EVENT_COLUMNS =
-  "id, slug, tipo, titulo, data_evento, local, historia, capa_url, tema, cor_principal, ativo, cor_fundo, cor_papel, logo_url, foto_layout, foto_foco, hora_evento, local_endereco, recepcao_local, recepcao_endereco, recepcao_hora";
+  "id, slug, tipo, titulo, data_evento, local, historia, capa_url, tema, cor_principal, ativo, cor_fundo, cor_papel, logo_url, foto_layout, foto_foco, hora_evento, local_endereco, recepcao_local, recepcao_endereco, recepcao_hora, carta1_de, carta1_texto, carta2_de, carta2_texto, cartas_layout";
 
 export type EventFull = EventRow & {
   pix_chave: string | null;
